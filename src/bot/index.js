@@ -3,6 +3,11 @@ const axios = require('axios');
 const pdKeyring = require('@polkadot/keyring');
 require('dotenv').config()
 
+const SYMBOL = process.env.SYMBOL || 'WND';
+const DECIMALS = parseInt(process.env.DECIMALS) || 15;
+const EXPLORER_URL = process.env.EXPLORER_URL || 'https://polkascan.io/pre/westend/transaction';
+const BOT_ID = process.env.MATRIX_USER_ID || '@westend_faucet:matrix.org';
+
 const bot = mSDK.createClient({
   baseUrl: 'https://matrix.org',
   accessToken: process.env.MATRIX_ACCESS_TOKEN,
@@ -13,7 +18,6 @@ const bot = mSDK.createClient({
 let ax = axios.create({
   baseURL: process.env.BACKEND_URL,
   timeout: 10000,
-
 });
 
 const sendMessage = (roomId, msg) => {
@@ -27,7 +31,7 @@ const sendMessage = (roomId, msg) => {
 }
 
 bot.on('RoomMember.membership', (_, member) => {
-  if (member.membership === 'invite' && member.userId === '@westend_faucet:matrix.org') {
+  if (member.membership === 'invite' && member.userId === BOT_ID) {
     bot.joinRoom(member.roomId).done(() => {
       console.log(`Auto-joined ${member.roomId}.`);
     });
@@ -40,6 +44,7 @@ bot.on('Room.timeline', async (event) => {
   }
 
   const { content: { body }, event_id: eventId, room_id: roomId, sender } = event.event;
+  console.warn(roomId, sender, body);
 
   let [action, arg0, arg1] = body.split(' ');
 
@@ -47,7 +52,7 @@ bot.on('Room.timeline', async (event) => {
     const res = await ax.get('/balance');
     const balance = res.data;
 
-    bot.sendHtmlMessage(roomId, `The faucet has ${balance/10**15} WNDs remaining.`, `The faucet has ${balance/10**15} WNDs remaining.`)
+    bot.sendHtmlMessage(roomId, `The faucet has ${balance/10**DECIMALS} ${SYMBOL}s remaining.`, `The faucet has ${balance/10**DECIMALS} ${SYMBOL}s remaining.`)
   }
 
   if (action === '!drip') {
@@ -58,7 +63,7 @@ bot.on('Room.timeline', async (event) => {
       return;
     }
 
-    let amount = 150;
+    let amount = 0.150;
     if (sender.endsWith(':web3.foundation') && arg1) {
       amount = arg1;
     }
@@ -76,8 +81,8 @@ bot.on('Room.timeline', async (event) => {
 
     bot.sendHtmlMessage(
       roomId,
-      `Sent ${sender} ${amount} mWNDs. Extrinsic hash: ${res.data}.`,
-      `Sent ${sender} ${amount} mWNDs. <a href="https://polkascan.io/pre/westend-m2/transaction/${res.data}">View on Polkascan.</a>`
+      `Sent ${sender} ${amount*1000} m${SYMBOL}s. Extrinsic hash: ${res.data}.`,
+      `Sent ${sender} ${amount*1000} m${SYMBOL}s. <a href="${EXPLORER_URL}/${res.data}">View on Polkascan.</a>`
     );
   }
 
@@ -85,7 +90,7 @@ bot.on('Room.timeline', async (event) => {
     sendMessage(roomId, `
 Usage:
   !balance - Get the faucet's balance.
-  !drip <Address> - Send Westend WNDs to <Address>.
+  !drip <Address> - Send ${SYMBOL}s to <Address>.
   !faucet - Prints usage information.`);
   }
 });

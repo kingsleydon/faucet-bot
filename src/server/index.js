@@ -9,7 +9,7 @@ const storage = new Storage();
 
 const app = express();
 app.use(bodyParser.json());
-const port = 5555;
+const port = parseInt(process.env.PORT) || 5555;
 
 const mnemonic = process.env.MNEMONIC;
 
