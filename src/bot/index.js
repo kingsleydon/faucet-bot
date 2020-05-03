@@ -52,8 +52,8 @@ const ghost = {
   async help (bot, args) {
     bot.sendMessage(
 `Usage:
-  ${bot.formatCommand('balance')} - Get the faucet's balance.
   ${bot.formatCommand('drip')} <Address> - Send ${SYMBOL}s to <Address>.
+  ${bot.formatCommand('balance')} - Get the faucet's balance.
   ${bot.formatCommand('help')} - Prints usage information.`);
   }
 };
