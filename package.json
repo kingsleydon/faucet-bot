@@ -21,8 +21,10 @@
     "crypto": "^1.0.1",
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
+    "https-proxy-agent": "^5.0.0",
     "matrix-js-sdk": "^2.3.0",
-    "nedb": "^1.8.0"
+    "nedb": "^1.8.0",
+    "telegraf": "^3.38.0"
   }
 }
 

@@ -12,6 +12,7 @@ app.use(bodyParser.json());
 const port = parseInt(process.env.PORT) || 5555;
 
 const mnemonic = process.env.MNEMONIC;
+const whitelistUserPrefix = process.env.WHITELISTED_USER_PREFIX;
 
 app.get('/health', (_, res) => {
   res.send('Faucet backend is healthy.');
@@ -29,8 +30,9 @@ const createAndApplyActions = async () => {
   app.post('/bot-endpoint', async (req, res) => {
     const { address, amount, sender } = req.body;
 
-    if (!(await storage.isValid(sender, address)) && !sender.endsWith(':web3.foundation')) {
+    if (!(await storage.isValid(sender, address)) && !sender.endsWith(whitelistUserPrefix)) {
       res.send('LIMIT');
+      return;
     }
 
     storage.saveData(sender, address);
