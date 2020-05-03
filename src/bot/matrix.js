@@ -42,13 +42,13 @@ exports.start = function (ghost) {
     };
   
     const cmds = body.split(' ').map(s => s.trim());
-    if (!cmds) return;
+    if (!cmds || !cmds[0].startsWith('!')) return;
 
-    const action = cmds[0];
+    const cmd = cmds[0].slice(1);
     const args = cmds.slice(1);
 
-    if (action in ghost) {
-      await ghost[actin](bot, args);
+    if (cmd in ghost) {
+      await ghost[cmd](bot, args);
     } else {
       console.log('Matrix bot: unknown cmd', cmd, args);
     }

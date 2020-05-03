@@ -58,5 +58,5 @@ const ghost = {
   }
 };
 
-// matrixBot.start(ghost);
+matrixBot.start(ghost);
 telegramBot.start(ghost);
