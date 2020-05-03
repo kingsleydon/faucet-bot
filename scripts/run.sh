@@ -1,3 +1,5 @@
+#!/bin/bash
+
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 
 # Mnenonic of the account (sr25516)
@@ -6,10 +8,15 @@ export MNEMONIC='rail return lawsuit bachelor dash ozone way common tired trumpe
 export SUBSTRATE_ENDPOINT=wss://poc1.phala.network/ws
 # Port listend by 'src/server'
 export PORT=5555
+export WHITELISTED_USER_PREFIX=':web3.foundation'
 
 # Get it from Riot (https://webapps.stackexchange.com/questions/131056/how-to-get-an-access-token-for-riot-matrix)
 export MATRIX_ACCESS_TOKEN=
 export MATRIX_USER_ID=@example:matrix.org
+
+# Get it from @BotFather
+export TELEGRAM_BOT_TOKEN=
+
 # The endpoint of 'src/server'
 export BACKEND_URL="http://127.0.0.1:${PORT}"
 export SYMBOL=PHA
