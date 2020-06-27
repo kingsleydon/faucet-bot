@@ -20,7 +20,8 @@ const ghost = {
   async balance (bot, args) {
     const res = await ax.get('/balance');
     const balance = res.data;
-    bot.sendHtmlMessage(`The faucet has ${balance/10**DECIMALS} ${SYMBOL}s remaining.`)
+    const formattedAmount = formatBalance(balance/10**DECIMALS, {forceUnit: '-', withUnit: SYMBOL, withSi: true});
+    bot.sendMessage(`The faucet has ${formattedAmount} remaining.`)
   },
   async drip (bot, args) {
     try {

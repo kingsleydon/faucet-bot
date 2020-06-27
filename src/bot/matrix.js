@@ -23,6 +23,9 @@ exports.start = function (ghost) {
       return; // Only act on messages (for now).
     }
   
+    if (!event.event.content || !event.event.content.body) {
+      return;
+    }
     const { content: { body }, event_id: eventId, room_id: roomId, sender } = event.event;
     console.warn(roomId, sender, body);
 
@@ -32,9 +35,7 @@ exports.start = function (ghost) {
       },
       sender,
       async sendMessage (msg) {
-        await mbot.sendEvent(
-          roomId, 'm.room.message', { 'body': msg, 'msgtype': 'm.text' },
-          '', console.error);
+        mbot.sendTextMessage(roomId, msg);
       },
       async sendHtmlMessage(htmlMsg, msg) {
         const fixedHtmlMsg = htmlMsg.replace(/\n/g, '<br>');
