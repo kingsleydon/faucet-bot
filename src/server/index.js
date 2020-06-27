@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 const port = parseInt(process.env.PORT) || 5555;
 
 const mnemonic = process.env.MNEMONIC;
-const whitelistUserPrefix = process.env.WHITELISTED_USER_PREFIX;
+const whitelistUserSuffix = process.env.WHITELISTED_USER_SUFFIX;
 
 app.get('/health', (_, res) => {
   res.send('Faucet backend is healthy.');
@@ -30,7 +30,7 @@ const createAndApplyActions = async () => {
   app.post('/bot-endpoint', async (req, res) => {
     const { address, amount, sender } = req.body;
 
-    if (!(await storage.isValid(sender, address)) && !sender.endsWith(whitelistUserPrefix)) {
+    if (!(await storage.isValid(sender, address)) && !sender.endsWith(whitelistUserSuffix)) {
       res.send('LIMIT');
       return;
     }

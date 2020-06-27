@@ -5,10 +5,10 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 # Mnenonic of the account (sr25516)
 export MNEMONIC='rail return lawsuit bachelor dash ozone way common tired trumpet similar glad'
 # Substrate websocket endpoint
-export SUBSTRATE_ENDPOINT=wss://poc1.phala.network/ws
+export SUBSTRATE_ENDPOINT=wss://poc2.phala.network/ws
 # Port listend by 'src/server'
 export PORT=5555
-export WHITELISTED_USER_PREFIX=':web3.foundation'
+export WHITELISTED_USER_SUFFIX=':phala.network'
 
 # Get it from Riot (https://webapps.stackexchange.com/questions/131056/how-to-get-an-access-token-for-riot-matrix)
 export MATRIX_ACCESS_TOKEN=
