@@ -22,7 +22,12 @@ class Actions {
   }
 
   async checkBalance() {
-    return this.api.query.balances.freeBalance(this.account.address);
+    if (this.api.query.balances.freeBalance) {
+      return this.api.query.balances.freeBalance(this.account.address);
+    } else {
+      const accountInfo = await this.api.query.system.account(this.account.address);
+      return accountInfo.data.free;
+    }
   }
 }
 
