@@ -36,8 +36,9 @@ exports.start = function (ghost) {
           roomId, 'm.room.message', { 'body': msg, 'msgtype': 'm.text' },
           '', console.error);
       },
-      async sendHtmlMessage(msg) {
-        await mbot.sendHtmlMessage(roomId, msg);
+      async sendHtmlMessage(htmlMsg, msg) {
+        const fixedHtmlMsg = htmlMsg.replace(/\n/g, '<br>');
+        await mbot.sendHtmlMessage(roomId, msg, fixedHtmlMsg);
       }
     };
   

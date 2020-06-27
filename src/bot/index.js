@@ -1,5 +1,6 @@
 const axios = require('axios');
 const pdKeyring = require('@polkadot/keyring');
+const { formatBalance } = require('@polkadot/util');
 require('dotenv').config()
 
 const matrixBot = require('./matrix');
@@ -8,6 +9,7 @@ const telegramBot = require('./telegram');
 const SYMBOL = process.env.SYMBOL || 'WND';
 const DECIMALS = parseInt(process.env.DECIMALS) || 15;
 const EXPLORER_URL = process.env.EXPLORER_URL || 'https://polkascan.io/pre/westend/transaction';
+const AMOUNT = parseFloat(process.env.AMOUNT) || 0.15;
 
 let ax = axios.create({
   baseURL: process.env.BACKEND_URL,
@@ -18,7 +20,7 @@ const ghost = {
   async balance (bot, args) {
     const res = await ax.get('/balance');
     const balance = res.data;
-    bot.sendHtmlMessage(`The faucet has ${balance/10**DECIMALS} ${SYMBOL}s remaining.`, `The faucet has ${balance/10**DECIMALS} ${SYMBOL}s remaining.`)
+    bot.sendHtmlMessage(`The faucet has ${balance/10**DECIMALS} ${SYMBOL}s remaining.`)
   },
   async drip (bot, args) {
     try {
@@ -28,7 +30,7 @@ const ghost = {
       return;
     }
 
-    let amount = 0.150;
+    let amount = AMOUNT;
     if (bot.sender.endsWith(':web3.foundation') && args[1]) {
       amount = args[1];
     }
@@ -44,17 +46,23 @@ const ghost = {
       return;
     }
 
+    const formattedAmount = formatBalance(amount, {forceUnit: '-', withUnit: SYMBOL, withSi: true});
     bot.sendHtmlMessage(
-      `Sent ${bot.sender} ${amount*1000} m${SYMBOL}s. Extrinsic hash: ${res.data}.`,
-      `Sent ${bot.sender} ${amount*1000} m${SYMBOL}s. <a href="${EXPLORER_URL}/${res.data}">View on Polkascan.</a>`
+      `Sent ${bot.sender} ${formattedAmount}. <a href="${EXPLORER_URL}/${res.data}">View on explorer.</a>`,
+      `Sent ${bot.sender} ${formattedAmount}. Extrinsic hash: ${res.data}.`
     );
   },
   async help (bot, args) {
-    bot.sendMessage(
+    const t = bot.formatCommand;
+    bot.sendHtmlMessage(
 `Usage:
-  ${bot.formatCommand('drip')} <Address> - Send ${SYMBOL}s to <Address>.
-  ${bot.formatCommand('balance')} - Get the faucet's balance.
-  ${bot.formatCommand('help')} - Prints usage information.`);
+  <strong>${t('drip')} <i>[Address]</i></strong> - Send ${SYMBOL}s to <i>[Address]</i>.
+  <strong>${t('balance')}</strong> - Get the faucet's balance.
+  <strong>${t('help')}</strong> - Prints usage information.`,
+`Usage:
+  ${t('drip')} <Address> - Send ${SYMBOL}s to <Address>.
+  ${t('balance')} - Get the faucet's balance.
+  ${t('help')} - Prints usage information.`);
   }
 };
 
