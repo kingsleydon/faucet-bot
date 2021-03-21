@@ -10,13 +10,14 @@ const mbot = mSDK.createClient({
 });
 
 exports.start = function (ghost) {
-  mbot.on('RoomMember.membership', (_, member) => {
-    if (member.membership === 'invite' && member.userId === BOT_ID) {
-      mbot.joinRoom(member.roomId).done(() => {
-        console.log(`Auto-joined ${member.roomId}.`);
-      });
-    }
-  });
+  // Temporarily disabled:
+  // mbot.on('RoomMember.membership', (_, member) => {
+  //   if (member.membership === 'invite' && member.userId === BOT_ID) {
+  //     mbot.joinRoom(member.roomId).done(() => {
+  //       console.log(`Auto-joined ${member.roomId}.`);
+  //     });
+  //   }
+  // });
   
   mbot.on('Room.timeline', async (event) => {
     if (event.getType() !== 'm.room.message') {
