@@ -49,11 +49,10 @@ const createAndApplyActions = async () => {
 
 const main = async () => {
   await createAndApplyActions();
-
-  app.listen(port, () => console.log(`Faucet backend listening on port ${port}.`));
+  const server = app.listen(port, () => console.log(`Faucet backend listening on port ${port}.`));
+  await new Promise((_, reject) => {
+    server.on('error', reject);
+  })
 }
 
-try {
-  main();
-} catch (e) { console.error(e); }
-
+main().catch(console.error).finally(() => process.exit());
