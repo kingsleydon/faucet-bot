@@ -1,13 +1,21 @@
 const { WsProvider, ApiPromise } = require('@polkadot/api');
 const pdKeyring = require('@polkadot/keyring');
+const fs = require('fs');
 
 const SUBSTRATE_ENDPOINT = process.env.SUBSTRATE_ENDPOINT || 'wss://westend-rpc.polkadot.io/';
 const DECIMALS = parseInt(process.env.DECIMALS) || 15;
+const TYPEDEFS_JSON = process.env.TYPEDEFS || '';
+
+function loadJson(path) {
+    const data = fs.readFileSync(path, {encoding: 'utf-8'});
+    return JSON.parse(data);
+}
 
 class Actions {
-  async create(mnemonic, url = SUBSTRATE_ENDPOINT) {
+  async create(mnemonic, url = SUBSTRATE_ENDPOINT, typedefPath = TYPEDEFS_JSON) {
     const provider = new WsProvider(url);
-    this.api = await ApiPromise.create({ provider });
+    const types = typedefPath ? loadJson(typedefPath) : undefined;
+    this.api = await ApiPromise.create({ provider, types });
     const keyring = new pdKeyring.Keyring({ type: 'sr25519' });
     this.account = keyring.addFromMnemonic(mnemonic);
   }
