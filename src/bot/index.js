@@ -3,7 +3,7 @@ const pdKeyring = require('@polkadot/keyring')
 const { formatBalance } = require('@polkadot/util')
 require('dotenv').config()
 
-const matrixBot = require('./matrix')
+// const matrixBot = require('./matrix')
 const telegramBot = require('./telegram')
 
 const SYMBOL = process.env.SYMBOL || 'WND'
@@ -21,10 +21,11 @@ const ghost = {
   async balance(bot) {
     const res = await ax.get('/balance')
     const balance = res.data
-    const formattedAmount = formatBalance(balance / 10 ** DECIMALS, {
+    const formattedAmount = formatBalance(balance, {
       forceUnit: '-',
       withUnit: SYMBOL,
       withSi: true,
+      decimals: DECIMALS,
     })
     bot.sendMessage(`The faucet has ${formattedAmount} remaining.`)
   },
@@ -56,10 +57,11 @@ const ghost = {
       return
     }
 
-    const formattedAmount = formatBalance(amount, {
+    const formattedAmount = formatBalance(amount * 10 ** DECIMALS, {
       forceUnit: '-',
       withUnit: SYMBOL,
       withSi: true,
+      decimals: DECIMALS,
     })
     bot.sendHtmlMessage(
       `Sent ${bot.sender} ${formattedAmount}. <a href="${EXPLORER_URL}/${res.data}">View on explorer.</a>`,
@@ -83,5 +85,5 @@ const ghost = {
   },
 }
 
-matrixBot.start(ghost)
+// matrixBot.start(ghost)
 telegramBot.start(ghost)
